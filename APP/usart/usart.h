@@ -12,7 +12,7 @@
 #define TURN_LEFT			'3'
 #define TURN_RIGHT		'4'
 
-extern u8 YawTarget;
+extern u16 YawTarget;
 
 
 void USART1_Init(u32 bound);

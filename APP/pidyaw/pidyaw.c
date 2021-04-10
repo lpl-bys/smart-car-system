@@ -71,7 +71,7 @@ void TIM2_IRQHandler(void){
 	
 }
 
-void PID_changeAngle(u8 angle){
+void PID_changeAngle(short angle){
 	
 	short x;
 //	short y;
@@ -85,8 +85,9 @@ void PID_changeAngle(u8 angle){
 	//y=(short)x;
 	
 	//printf("Yaw: %.3f  output: %.3f\r\n",YAW,yaw_pid_state.output);
+	angle += x;
 	
-	changeAngle(angle+x);
+	changeAngle(angle);
 	
 }
 

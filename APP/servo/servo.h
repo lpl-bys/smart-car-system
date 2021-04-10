@@ -10,7 +10,7 @@
 
 void servoInit(void);
 void toCenter(void);
-void changeAngle(u8 angle);
+void changeAngle(short angle);
 
 
 

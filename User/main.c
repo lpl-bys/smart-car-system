@@ -62,8 +62,8 @@ int main(void){
 	//	j=(short)YAW;
 		PID_changeAngle(YawTarget);
 //		printf("Yaw: %.3f  %d\r\n ",YAW,j);
-		if(i%5==0)
-			printf("Yaw: %.3f\r\n",YAW);
+//		if(i%5==0)
+//			printf("Yaw: %.3f\r\n",YAW);
 //		delay_ms(10);
 		
 	}

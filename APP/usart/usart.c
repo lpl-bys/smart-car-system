@@ -9,7 +9,7 @@ static u8 U2TxBuffer[256];
 static u8 U2TxCounter=0;
 static u8 U2TXCOUNT=0; 
 
-u8 YawTarget=90;
+u16 YawTarget=90;
 
 int fputc(int ch,FILE *p)  //函数默认的，在使用printf函数时自动调用
 {
@@ -220,7 +220,7 @@ void CopeSerial1Data(unsigned char ucData){
 					case GO_BACK : 			YawTarget=270;controlMotor(GO_FORWARD);break;
 					case TURN_LEFT : 		YawTarget=70;controlMotor(GO_FORWARD);break;
 					case TURN_RIGHT : 	YawTarget=110;controlMotor(GO_FORWARD);break;	
-					default : 					controlMotor(BRAKE);break;	
+					default : 					 controlMotor(BRAKE);b reak;	
 				}
 				break;
 		}

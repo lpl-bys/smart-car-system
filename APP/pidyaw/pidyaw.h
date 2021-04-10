@@ -19,7 +19,7 @@ extern float KP1,KI1,KD1;
 
 void yawPID_Init(void);	
 void YAWPIDscan_Init(void);
-void PID_changeAngle(u8 angle);
+void PID_changeAngle(short angle);
 
 
 

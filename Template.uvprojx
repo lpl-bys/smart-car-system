@@ -337,7 +337,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER,STM32F10X_MD</Define>
               <Undefine></Undefine>
-              <IncludePath>.\User;.\Libraries\CMSIS;.\Libraries\STM32F10x_StdPeriph_Driver\inc;.\Public;.\APP\usart;.\APP\led;.\APP\servo;.\APP\motor;.\APP\JY901;.\Public\pid;.\APP\pidyaw;.\APP\stm32_flash</IncludePath>
+              <IncludePath>.\User;.\Libraries\CMSIS;.\Libraries\STM32F10x_StdPeriph_Driver\inc;.\Public;.\APP\usart;.\APP\led;.\APP\servo;.\APP\motor;.\APP\JY901;.\Public\pid;.\APP\pidyaw;.\APP\stm32_flash;.\APP\ESP8266;.\APP\dma</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -441,6 +441,11 @@
               <FileType>1</FileType>
               <FilePath>.\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_flash.c</FilePath>
             </File>
+            <File>
+              <FileName>stm32f10x_dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_dma.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -496,6 +501,16 @@
               <FileType>1</FileType>
               <FilePath>.\APP\stm32_flash\stm32_flash.c</FilePath>
             </File>
+            <File>
+              <FileName>ESP8266.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\APP\ESP8266\ESP8266.c</FilePath>
+            </File>
+            <File>
+              <FileName>dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\APP\dma\dma.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -515,6 +530,11 @@
               <FileName>pid.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Public\pid\pid.c</FilePath>
+            </File>
+            <File>
+              <FileName>public.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Public\public.c</FilePath>
             </File>
           </Files>
         </Group>

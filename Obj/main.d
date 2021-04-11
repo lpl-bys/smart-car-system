@@ -40,3 +40,7 @@
 .\obj\main.o: .\APP\JY901\JY901.h
 .\obj\main.o: .\Public\pid\pid.h
 .\obj\main.o: .\APP\pidyaw\pidyaw.h
+.\obj\main.o: .\APP\dma\dma.h
+.\obj\main.o: .\APP\ESP8266\ESP8266.h
+.\obj\main.o: .\APP\dma\dma.h
+.\obj\main.o: .\Public\public.h

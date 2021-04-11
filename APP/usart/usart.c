@@ -3,7 +3,9 @@
 #include "motor.h"
 #include "JY901.h"
 #include "pidyaw.h"
+#include "dma.h"
 
+extern char receive_buffer[DMA1_USARTX_BUFF_SIZE];
 
 static u8 U2TxBuffer[256];
 static u8 U2TxCounter=0;
@@ -122,7 +124,56 @@ void USART2_Init(u32 bound){
 	
 }
 
+/*******************************************************************************
+* 函 数 名         : USART3_Init
+* 函数功能		   : USART3初始化函数
+* 输    入         : bound:波特率
+* 输    出         : 无
+*******************************************************************************/ 
+void USART3_Init(u32 bound)
+{
+   //GPIO端口设置
+	GPIO_InitTypeDef GPIO_InitStructure;
+	USART_InitTypeDef USART_InitStructure;
+	NVIC_InitTypeDef NVIC_InitStructure;
+	
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB,ENABLE);
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART3,ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO,ENABLE);	 //打开时钟
+ 
+	
+	/*  配置GPIO的模式和IO口 */
+	GPIO_InitStructure.GPIO_Pin=GPIO_Pin_10;//TX			   //串口输出P0A9
+	GPIO_InitStructure.GPIO_Speed=GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Mode=GPIO_Mode_AF_PP;	    //复用推挽输出
+	GPIO_Init(GPIOB,&GPIO_InitStructure);  /* 初始化串口输入IO */
+	GPIO_InitStructure.GPIO_Pin=GPIO_Pin_11;//RX			 //串口输入PA10
+	GPIO_InitStructure.GPIO_Mode=GPIO_Mode_IN_FLOATING;		  //模拟输入
+	GPIO_Init(GPIOB,&GPIO_InitStructure); /* 初始化GPIO */
+	
 
+   //USART1 初始化设置
+	USART_InitStructure.USART_BaudRate = bound;//波特率设置
+	USART_InitStructure.USART_WordLength = USART_WordLength_8b;//字长为8位数据格式
+	USART_InitStructure.USART_StopBits = USART_StopBits_1;//一个停止位
+	USART_InitStructure.USART_Parity = USART_Parity_No;//无奇偶校验位
+	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;//无硬件数据流控制
+	USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;	//收发模式
+	USART_Init(USART3, &USART_InitStructure); //初始化串口1
+	
+	USART_ITConfig(USART3,USART_IT_IDLE,ENABLE);
+	USART_DMACmd(USART3,USART_DMAReq_Rx|USART_DMAReq_Tx,ENABLE);
+
+	//Usart1 NVIC 配置
+	NVIC_InitStructure.NVIC_IRQChannel = USART3_IRQn;//串口1中断通道
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority=1;//抢占优先级3
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority =3;		//子优先级3
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;			//IRQ通道使能
+	NVIC_Init(&NVIC_InitStructure);	//根据指定的参数初始化VIC寄存器、
+	
+	USART_ClearFlag(USART3, USART_FLAG_TC);
+	USART_Cmd(USART3, ENABLE);  //使能串口13
+}
 
 
 /*******************************************************************************
@@ -220,7 +271,7 @@ void CopeSerial1Data(unsigned char ucData){
 					case GO_BACK : 			YawTarget=270;controlMotor(GO_FORWARD);break;
 					case TURN_LEFT : 		YawTarget=70;controlMotor(GO_FORWARD);break;
 					case TURN_RIGHT : 	YawTarget=110;controlMotor(GO_FORWARD);break;	
-					default : 					 controlMotor(BRAKE);b reak;	
+					default : 					 controlMotor(BRAKE);break;	
 				}
 				break;
 		}
@@ -260,4 +311,40 @@ void CopeSerial2Data(unsigned char ucData)
 		}
 		ucRxCnt=0;//清空缓存区
 	}
+}
+
+void CopeSerial3Data(void){
+	
+	char* cx=strstr(receive_buffer,"S");
+//	if(receive_buffer[7]!='S'){ //数据头不对，则重新开始寻找0xA5数据头
+//		memset(receive_buffer,0,sizeof(receive_buffer));
+//		return;
+//	}
+//	if(strlen(receive_buffer+7)<4) {return;}//数据不满4个，则返回
+//	if(receive_buffer[10] == 'E'){
+		yawPID_Init();
+		switch(cx[1]){//判断数据是哪种数据，然后将其拷贝到对应的结构体中，有些数据包需要通过上位机打开对应的输出后，才能接收到这个数据包的数据
+			case 'A': car_speed=cx[2]-'0';controlSpeed();break;
+			case 'C': 
+				switch(cx[2]){
+					case '4' : KP1+=0.5;printf("KP1: %f\r\n",KP1);break;
+					case '1' : KP1-=0.5;printf("KP1: %f\r\n",KP1);break;
+					case '2' : KI1-=0.1;printf("KI1: %f\r\n",KI1);break;
+					case '0' : KI1+=0.1;printf("KI1: %f\r\n",KI1);break;
+					default :
+						break;
+				}
+				break;
+			default:
+				switch(cx[2]){			
+					case GO_STRAIGHT : 	YawTarget=90;controlMotor(GO_FORWARD);break;
+					case GO_BACK : 			YawTarget=270;controlMotor(GO_FORWARD);break;
+					case TURN_LEFT : 		YawTarget=70;controlMotor(GO_FORWARD);break;
+					case TURN_RIGHT : 	YawTarget=110;controlMotor(GO_FORWARD);break;	
+					default : 					 controlMotor(BRAKE);break;	
+				}
+				break;
+		}
+//		memset(receive_buffer,0,sizeof(receive_buffer));//清空缓存区
+//	}
 }

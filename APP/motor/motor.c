@@ -208,7 +208,7 @@ void controlSpeed(void){
 	
 	STM32_FLASH_Write(SPEED_HPER_SAVE_ADDR,&tim3_hper,1);
 	STM32_FLASH_Write(SPEED_LPER_SAVE_ADDR,&tim3_lper,1);
-	printf("SPEED-hper: %d\r\n",tim3_hper);
+//	printf("SPEED-hper: %d\r\n",tim3_hper);
 	
 }
 

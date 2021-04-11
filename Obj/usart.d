@@ -39,3 +39,8 @@
 .\obj\usart.o: .\APP\JY901\JY901.h
 .\obj\usart.o: .\APP\pidyaw\pidyaw.h
 .\obj\usart.o: .\Public\pid\pid.h
+.\obj\usart.o: .\APP\dma\dma.h
+.\obj\usart.o: .\APP\led\LED.h
+.\obj\usart.o: .\APP\ESP8266\ESP8266.h
+.\obj\usart.o: .\APP\dma\dma.h
+.\obj\usart.o: .\Public\public.h

@@ -9,6 +9,7 @@
 ".\obj\stm32f10x_tim.o"
 ".\obj\stm32f10x_usart.o"
 ".\obj\stm32f10x_flash.o"
+".\obj\stm32f10x_dma.o"
 ".\obj\system_stm32f10x.o"
 ".\obj\core_cm3.o"
 ".\obj\usart.o"
@@ -18,9 +19,12 @@
 ".\obj\jy901.o"
 ".\obj\pidyaw.o"
 ".\obj\stm32_flash.o"
+".\obj\esp8266.o"
+".\obj\dma.o"
 ".\obj\system.o"
 ".\obj\systick.o"
 ".\obj\pid.o"
+".\obj\public.o"
 --library_type=microlib --strict --scatter ".\Obj\Template.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers

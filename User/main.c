@@ -7,7 +7,10 @@
 #include "JY901.h"
 #include "pid.h"
 #include "pidyaw.h"
+#include "dma.h"
+#include "ESP8266.h"
 
+extern u8 TCP_CONTINUE,CUT_CONNECT_STATION,CONNECT_AP,WIFI_MODE;
 
 /*******************************************************************************
 * º¯ Êý Ãû         : main
@@ -19,6 +22,10 @@ int main(void){
 	
 	u8 j;
 	u16 i;
+	u8 flag,conflag;
+	
+	flag=1;
+	conflag=1;
 //	short j;
 	
 	SysTick_Init(72);
@@ -27,8 +34,11 @@ int main(void){
 	motorInit();
 	yawPID_Init();
 	LED_Init();
-	USART1_Init(115200);
+//	USART1_Init(115200);
+//	DMA1_USARTX_Init();
 	USART2_Init(9600);
+//	USART3_Init(115200);
+//	ESP8266_Init();
 	
 	delay_ms(1000);
 	UART2_Put_String(UNLOCK);
@@ -39,6 +49,12 @@ int main(void){
 	delay_ms(100);
 	UART2_Put_String(ZTOZERO);
 	delay_ms(100);
+//	
+//	printf("TEST\r\n");
+	DMA1_USARTX_Init();
+	USART3_Init(115200);
+	ESP8266_Init();
+	Start_Station();
 	
 	
 	while(1){
@@ -64,6 +80,21 @@ int main(void){
 //		printf("Yaw: %.3f  %d\r\n ",YAW,j);
 //		if(i%5==0)
 //			printf("Yaw: %.3f\r\n",YAW);
+		if(i%5==0){
+			if((!CUT_CONNECT_STATION)||CONNECT_AP){
+//				if(TCP_CONTINUE)	AT_CIPSEND("Hello!","6",WIFI_MODE);			
+//				else 							AT_CIPSTART("TCP","192.168.137.1","23333");
+				if(!TCP_CONTINUE)	AT_CIPSTART("TCP","192.168.137.1","23333");
+				else if(conflag){
+					AT_CIPSEND("TCP-Builded!","12",WIFI_MODE);	
+					conflag=0;
+				}
+			}
+			else if(flag){
+				Turn_AP();
+				flag=0;
+			}
+		}
 //		delay_ms(10);
 		
 	}

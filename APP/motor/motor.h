@@ -30,7 +30,7 @@ extern u8 car_speed;
 
 void motorInit(void);
 void controlMotor(u8 direction);
-void controlSpeed(void);
+void controlSpeed(u16 speed_hpwm);
 
 
 

@@ -5,6 +5,8 @@
 #include "stm32f10x.h"
 #include "SysTick.h"
 
+#define INITIALIZE	0x01
+
 
 //位带操作,实现51类似的GPIO控制功能
 //具体实现思想,参考<<CM3权威指南>>第五章(87页~92页).

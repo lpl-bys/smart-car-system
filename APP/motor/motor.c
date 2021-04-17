@@ -22,11 +22,19 @@ void motorInit(void){
 	
 	
 	pwm3_status=0;
-	tim3_psc=(36000-1);
-//	tim3_hper=18;
-//	tim3_lper=62;
+	tim3_psc=(7200-1);		//周期20ms
+	
+#ifdef INITIALIZE
+	tim3_hper=45;
+	tim3_lper=155;
+	STM32_FLASH_Write(SPEED_HPER_SAVE_ADDR,&tim3_hper,1);
+	STM32_FLASH_Write(SPEED_LPER_SAVE_ADDR,&tim3_lper,1);
+#else
 	STM32_FLASH_Read(SPEED_HPER_SAVE_ADDR,&tim3_hper,1);
 	STM32_FLASH_Read(SPEED_LPER_SAVE_ADDR,&tim3_lper,1);
+#endif
+
+
 	car_speed=0;
 	
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3,ENABLE);//使能TIM2 AND TIM3时钟
@@ -124,87 +132,36 @@ void controlMotor(u8 direction){
 				break;
 		}
 		
-//		switch(car_speed){		
-//			case SPEED_LEVEL_0 :
-//				tim3_hper=39;
-//				tim3_lper=1;
-//				break;
-//			
-//			case SPEED_LEVEL_1 :
-//				tim3_hper=32;
-//				tim3_lper=8;
-//				break;
-
-//			case SPEED_LEVEL_2 :
-//				tim3_hper=24;
-//				tim3_lper=16;
-//				break;
-//			
-//			case SPEED_LEVEL_3 :
-//				tim3_hper=16;
-//				tim3_lper=24;
-//				break;
-//			
-//			case SPEED_LEVEL_4 :
-//				tim3_hper=8;
-//				tim3_lper=32;
-//				break;
-//			
-//			case SPEED_LEVEL_5 :
-//				tim3_hper=1;
-//				tim3_lper=39;
-//				break;	
-//		}
-//		switch(car_speed){
-//			case 3 :
-//				tim3_hper+=2;
-//				tim3_lper-=2;
-//				printf("SPEED-hper: %d\r\n",tim3_hper);
-//				car_speed=0;
-//				break;
-//			case 5 :
-//				tim3_hper-=2;
-//				tim3_lper+=2;
-//				printf("SPEED-hper: %d\r\n",tim3_hper);
-//				car_speed=0;
-//				break;
-//			default :
-//				break;
-//			
-//		}
-
-//		
-//		TIM_Cmd(TIM3,ENABLE);
 	}
-//	else{
-//		
-//		TIM_Cmd(TIM3,DISABLE);
-//		GPIO_ResetBits(MOTOR_PORT,MOTOR_ENA_PIN);
-//		GPIO_ResetBits(MOTOR_PORT,MOTOR_ENB_PIN);
-//		
-//	}
+		
 	
 }
 
-void controlSpeed(void){
+void controlSpeed(u16 speed_hpwm){	//周期20ms，PWM高电平计数值	180 ~ 20
 	
-	switch(car_speed){
-		case 3 :
-			tim3_hper+=2;
-			tim3_lper-=2;
-//			printf("SPEED-hper: %d\r\n",tim3_hper);
-			car_speed=0;
-			break;
-		case 5 :
-			tim3_hper-=2;
-			tim3_lper+=2;
-//			printf("SPEED-hper: %d\r\n",tim3_hper);
-			car_speed=0;
-			break;
-		default :
-			break;
-		
-	}
+//	switch(car_speed){
+//		case 3 :
+//			tim3_hper+=2;
+//			tim3_lper-=2;
+////			printf("SPEED-hper: %d\r\n",tim3_hper);
+//			car_speed=0;
+//			break;
+//		case 5 :
+//			tim3_hper-=2;
+//			tim3_lper+=2;
+////			printf("SPEED-hper: %d\r\n",tim3_hper);
+//			car_speed=0;
+//			break;
+//		default :
+//			break;
+//		
+//	}
+	
+	if(speed_hpwm>180) speed_hpwm=180;
+	else if(speed_hpwm<20) speed_hpwm=20;
+	
+	tim3_hper = speed_hpwm;
+	tim3_lper = 200-speed_hpwm;
 	
 	STM32_FLASH_Write(SPEED_HPER_SAVE_ADDR,&tim3_hper,1);
 	STM32_FLASH_Write(SPEED_LPER_SAVE_ADDR,&tim3_lper,1);

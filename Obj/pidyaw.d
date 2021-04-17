@@ -36,3 +36,6 @@
 .\obj\pidyaw.o: F:\KEIL5 MDK\ARM\ARMCC\Bin\..\include\stdio.h
 .\obj\pidyaw.o: .\APP\servo\servo.h
 .\obj\pidyaw.o: .\APP\JY901\JY901.h
+.\obj\pidyaw.o: .\Public\public.h
+.\obj\pidyaw.o: F:\KEIL5 MDK\ARM\ARMCC\Bin\..\include\string.h
+.\obj\pidyaw.o: .\APP\stm32_flash\stm32_flash.h

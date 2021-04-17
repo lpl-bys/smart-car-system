@@ -182,20 +182,20 @@ void USART3_Init(u32 bound)
 * 输    入         : 无
 * 输    出         : 无
 *******************************************************************************/ 
-void USART1_IRQHandler(void)                	//串口1中断服务程序
-{
-	u8 r;
-	if(USART_GetITStatus(USART1, USART_IT_RXNE) != RESET)  //接收中断
-	{
-		r =USART_ReceiveData(USART1);//(USART1->DR);	//读取接收到的数据
-		CopeSerial1Data(r);
-		USART_ClearITPendingBit(USART1, USART_IT_RXNE);
-		
-//		USART_SendData(USART1,r);
-//		while(USART_GetFlagStatus(USART1,USART_FLAG_TC) != SET);
-	} 
-	USART_ClearITPendingBit(USART2,USART_IT_ORE);
-}
+//void USART1_IRQHandler(void)                	//串口1中断服务程序
+//{
+//	u8 r;
+//	if(USART_GetITStatus(USART1, USART_IT_RXNE) != RESET)  //接收中断
+//	{
+//		r =USART_ReceiveData(USART1);//(USART1->DR);	//读取接收到的数据
+//		CopeSerial1Data(r);
+//		USART_ClearITPendingBit(USART1, USART_IT_RXNE);
+//		
+////		USART_SendData(USART1,r);
+////		while(USART_GetFlagStatus(USART1,USART_FLAG_TC) != SET);
+//	} 
+//	USART_ClearITPendingBit(USART2,USART_IT_ORE);
+//}
 
 
 void USART2_IRQHandler(void)
@@ -240,44 +240,44 @@ void UART2_Put_String(unsigned char *Str)
 
 
 
-void CopeSerial1Data(unsigned char ucData){
-	
-	static unsigned char ucRxBuffer[250];
-	static unsigned char ucRxCnt = 0;	
-	
-	ucRxBuffer[ucRxCnt++]=ucData;	//将收到的数据存入缓冲区中
-	if(ucRxBuffer[0]!='S'){ //数据头不对，则重新开始寻找0xA5数据头
-		ucRxCnt=0;
-		return;
-	}
-	if(ucRxCnt<4) {return;}//数据不满4个，则返回
-	if(ucData == 'E'){
-		yawPID_Init();
-		switch(ucRxBuffer[1]){//判断数据是哪种数据，然后将其拷贝到对应的结构体中，有些数据包需要通过上位机打开对应的输出后，才能接收到这个数据包的数据
-			case 'A': car_speed=ucRxBuffer[2]-'0';controlSpeed();break;
-			case 'C': 
-				switch(ucRxBuffer[2]){
-					case '4' : KP1+=0.5;printf("KP1: %f\r\n",KP1);break;
-					case '1' : KP1-=0.5;printf("KP1: %f\r\n",KP1);break;
-					case '2' : KI1-=0.1;printf("KI1: %f\r\n",KI1);break;
-					case '0' : KI1+=0.1;printf("KI1: %f\r\n",KI1);break;
-					default :
-						break;
-				}
-				break;
-			default:
-				switch(ucRxBuffer[2]){			
-					case GO_STRAIGHT : 	YawTarget=90;controlMotor(GO_FORWARD);break;
-					case GO_BACK : 			YawTarget=270;controlMotor(GO_FORWARD);break;
-					case TURN_LEFT : 		YawTarget=70;controlMotor(GO_FORWARD);break;
-					case TURN_RIGHT : 	YawTarget=110;controlMotor(GO_FORWARD);break;	
-					default : 					 controlMotor(BRAKE);break;	
-				}
-				break;
-		}
-		ucRxCnt=0;//清空缓存区
-	}
-}
+//void CopeSerial1Data(unsigned char ucData){
+//	
+//	static unsigned char ucRxBuffer[250];
+//	static unsigned char ucRxCnt = 0;	
+//	
+//	ucRxBuffer[ucRxCnt++]=ucData;	//将收到的数据存入缓冲区中
+//	if(ucRxBuffer[0]!='S'){ //数据头不对，则重新开始寻找0xA5数据头
+//		ucRxCnt=0;
+//		return;
+//	}
+//	if(ucRxCnt<4) {return;}//数据不满4个，则返回
+//	if(ucData == 'E'){
+//		yawPID_Init();
+//		switch(ucRxBuffer[1]){//判断数据是哪种数据，然后将其拷贝到对应的结构体中，有些数据包需要通过上位机打开对应的输出后，才能接收到这个数据包的数据
+//			case 'A': car_speed=ucRxBuffer[2]-'0';controlSpeed();break;
+//			case 'C': 
+//				switch(ucRxBuffer[2]){
+//					case '4' : KP1+=0.5;printf("KP1: %f\r\n",KP1);break;
+//					case '1' : KP1-=0.5;printf("KP1: %f\r\n",KP1);break;
+//					case '2' : KI1-=0.1;printf("KI1: %f\r\n",KI1);break;
+//					case '0' : KI1+=0.1;printf("KI1: %f\r\n",KI1);break;
+//					default :
+//						break;
+//				}
+//				break;
+//			default:
+//				switch(ucRxBuffer[2]){			
+//					case GO_STRAIGHT : 	YawTarget=90;controlMotor(GO_FORWARD);break;
+//					case GO_BACK : 			YawTarget=270;controlMotor(GO_FORWARD);break;
+//					case TURN_LEFT : 		YawTarget=70;controlMotor(GO_FORWARD);break;
+//					case TURN_RIGHT : 	YawTarget=110;controlMotor(GO_FORWARD);break;	
+//					default : 					 controlMotor(BRAKE);break;	
+//				}
+//				break;
+//		}
+//		ucRxCnt=0;//清空缓存区
+//	}
+//}
 
 
 //CopeSerialData为串口2中断调用函数，串口每收到一个数据，调用一次这个函数。
@@ -322,28 +322,26 @@ void CopeSerial3Data(void){
 //	}
 //	if(strlen(receive_buffer+7)<4) {return;}//数据不满4个，则返回
 //	if(receive_buffer[10] == 'E'){
-		yawPID_Init();
-		switch(cx[1]){//判断数据是哪种数据，然后将其拷贝到对应的结构体中，有些数据包需要通过上位机打开对应的输出后，才能接收到这个数据包的数据
-			case 'A': car_speed=cx[2]-'0';controlSpeed();break;
+//		yawPID_Init();
+		switch(cx[1]){
+//			case 'A': car_speed=cx[2]-'0';controlSpeed();break;
+			case 'A':
+				controlSpeed(String_To_Num(cx+2));//20 ~ 180
+				break;
 			case 'C': 
-				switch(cx[2]){
-					case '4' : KP1+=0.5;printf("KP1: %f\r\n",KP1);break;
-					case '1' : KP1-=0.5;printf("KP1: %f\r\n",KP1);break;
-					case '2' : KI1-=0.1;printf("KI1: %f\r\n",KI1);break;
-					case '0' : KI1+=0.1;printf("KI1: %f\r\n",KI1);break;
-					default :
-						break;
-				}
+				Change_PID(cx[2],String_To_Num(cx+3));
 				break;
+			case 'B':
+				if(cx[2]-'0'){
+					YawTarget=String_To_Num(cx+3);//	0	~ 180
+					controlMotor(GO_FORWARD); 
+				}
+				else controlMotor(BRAKE);
+				break;		
 			default:
-				switch(cx[2]){			
-					case GO_STRAIGHT : 	YawTarget=90;controlMotor(GO_FORWARD);break;
-					case GO_BACK : 			YawTarget=270;controlMotor(GO_FORWARD);break;
-					case TURN_LEFT : 		YawTarget=70;controlMotor(GO_FORWARD);break;
-					case TURN_RIGHT : 	YawTarget=110;controlMotor(GO_FORWARD);break;	
-					default : 					 controlMotor(BRAKE);break;	
-				}
-				break;
+				YawTarget=90;
+				controlMotor(BRAKE);
+				break;	
 		}
 //		memset(receive_buffer,0,sizeof(receive_buffer));//清空缓存区
 //	}
